@@ -4,43 +4,43 @@
 #include <errno.h>
 #include "../utility/Exception.h"
 #include "Integer.h"
-#define BUFFER_SIZE 26
+#define bufferSize 26
 
 
 void inputLongElementForInteger(long *element, FILE *incomingFlow, FILE *exceptionFlow);
 
-static FieldInfo *INTEGER_FIELD_INFO = NULL;
+static FieldInfo *integerFieldInfo = NULL;
 
 FieldInfo* getIntegerFieldInfo(FILE *exceptionFlow) {
-    if (INTEGER_FIELD_INFO == NULL) {
-        INTEGER_FIELD_INFO = (FieldInfo *) malloc(sizeof(FieldInfo));
-        if (INTEGER_FIELD_INFO == NULL) {
+    if (integerFieldInfo == NULL) {
+        integerFieldInfo = (FieldInfo *) malloc(sizeof(FieldInfo));
+        if (integerFieldInfo == NULL) {
             setExceptionCode(ALLOCATION_MEMORY_EXCEPTION);
             fprintf(exceptionFlow, "[Memory allocation error for integer fieldinfo]\n");
             fprintf(exceptionFlow, "[function: %s | file: %s ]\n", __func__, __FILE__);
             return NULL;
         }
-        INTEGER_FIELD_INFO->elementSize = sizeof(long);
-        INTEGER_FIELD_INFO->inputElement = inputIntegerElement;
-        INTEGER_FIELD_INFO->printElement = printIntegerElement;
-        INTEGER_FIELD_INFO->foldElements = foldIntegerElements;
-        INTEGER_FIELD_INFO->multiplyElementByScalar = multiplyIntegerElementByScalar;
-        INTEGER_FIELD_INFO->getInverseElementForAddition = getInverseIntegerElementForAddition;
-        INTEGER_FIELD_INFO->getInverseElementForMultiplication = getInverseIntegerElementForMultiplication;
-        INTEGER_FIELD_INFO->getNeutralElementForAddition = getNeutralIntegerElementForAddition;
-        INTEGER_FIELD_INFO->getNeutralElementForMultiplication = getNeutralIntegerElementForMultiplication;
-        INTEGER_FIELD_INFO->compareElements = compareIntegerElements;
+        integerFieldInfo->elementSize = sizeof(long);
+        integerFieldInfo->inputElement = inputIntegerElement;
+        integerFieldInfo->printElement = printIntegerElement;
+        integerFieldInfo->foldElements = foldIntegerElements;
+        integerFieldInfo->multiplyElementByScalar = multiplyIntegerElementByScalar;
+        integerFieldInfo->getInverseElementForAddition = getInverseIntegerElementForAddition;
+        integerFieldInfo->getInverseElementForMultiplication = getInverseIntegerElementForMultiplication;
+        integerFieldInfo->getNeutralElementForAddition = getNeutralIntegerElementForAddition;
+        integerFieldInfo->getNeutralElementForMultiplication = getNeutralIntegerElementForMultiplication;
+        integerFieldInfo->compareElements = compareIntegerElements;
     }
-    return INTEGER_FIELD_INFO;
+    return integerFieldInfo;
 }
 
 void inputLongElementForInteger(long *element, FILE *incomingFlow, FILE *exceptionFlow) {
     int index = 1;
     int inputSymbolCode;
-    char inputBuffer[BUFFER_SIZE];
+    char inputBuffer[bufferSize];
     inputBuffer[0] = 43;
     while (isspace(inputSymbolCode = fgetc(incomingFlow)) && inputSymbolCode != EOF);
-    while (index < BUFFER_SIZE - 1 && inputSymbolCode != EOF) {
+    while (index < bufferSize - 1 && inputSymbolCode != EOF) {
         if (isspace(inputSymbolCode)) {
             break;
         } else if (inputSymbolCode == '+') {

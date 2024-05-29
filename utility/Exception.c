@@ -4,28 +4,28 @@
 #define exceptionStream stderr
 
 
-static Exception *EXCEPTION = NULL;
+static Exception *exception = NULL;
 
 int getExceptionCode() {
-    if (EXCEPTION == NULL) {
-        EXCEPTION = (Exception *) malloc(sizeof(Exception));
-        if (EXCEPTION == NULL) {
+    if (exception == NULL) {
+        exception = (Exception *) malloc(sizeof(Exception));
+        if (exception == NULL) {
             fprintf(exceptionStream, "Something went wrong: critical error\n");
             exit(1);
         }
-        EXCEPTION->exceptionCode = NO_EXCEPTION;
+        exception->exceptionCode = NO_EXCEPTION;
     }
-    return EXCEPTION->exceptionCode;
+    return exception->exceptionCode;
 }
 
 void setExceptionCode(int code) {
-    if (EXCEPTION == NULL) {
-        EXCEPTION = (Exception *) malloc(sizeof(Exception));
-        if (EXCEPTION == NULL) {
+    if (exception == NULL) {
+        exception = (Exception *) malloc(sizeof(Exception));
+        if (exception == NULL) {
             fprintf(exceptionStream, "Something went wrong: critical error\n");
             exit(1);
         }
-        EXCEPTION->exceptionCode = NO_EXCEPTION;
+        exception->exceptionCode = NO_EXCEPTION;
     }
-    EXCEPTION->exceptionCode = code;
+    exception->exceptionCode = code;
 }

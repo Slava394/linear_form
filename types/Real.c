@@ -5,44 +5,44 @@
 #include <math.h>
 #include "../utility/Exception.h"
 #include "Real.h"
-#define BUFFER_SIZE 64
+#define bufferSize 64
 
 
 void inputDoubleElementForReal(double *element, FILE *incomingFlow, FILE *exceptionFlow);
 
-static FieldInfo *REAL_FIELD_INFO = NULL;
+static FieldInfo *realFieldInfo = NULL;
 
 FieldInfo* getRealFieldInfo(FILE *exceptionFlow) {
-    if (REAL_FIELD_INFO == NULL) {
-        REAL_FIELD_INFO = (FieldInfo *) malloc(sizeof(FieldInfo));
-        if (REAL_FIELD_INFO == NULL) {
+    if (realFieldInfo == NULL) {
+        realFieldInfo = (FieldInfo *) malloc(sizeof(FieldInfo));
+        if (realFieldInfo == NULL) {
             setExceptionCode(ALLOCATION_MEMORY_EXCEPTION);
             fprintf(exceptionFlow, "[Memory allocation error for real fieldinfo]\n");
             fprintf(exceptionFlow, "[function: %s | file: %s ]\n", __func__, __FILE__);
             return NULL;
         }
-        REAL_FIELD_INFO->elementSize = sizeof(double);
-        REAL_FIELD_INFO->inputElement = inputRealElement;
-        REAL_FIELD_INFO->printElement = printRealElement;
-        REAL_FIELD_INFO->foldElements = foldRealElements;
-        REAL_FIELD_INFO->multiplyElementByScalar = multiplyRealElementByScalar;
-        REAL_FIELD_INFO->getInverseElementForAddition = getInverseRealElementForAddition;
-        REAL_FIELD_INFO->getInverseElementForMultiplication = getInverseRealElementForMultiplication;
-        REAL_FIELD_INFO->getNeutralElementForAddition = getNeutralRealElementForAddition;
-        REAL_FIELD_INFO->getNeutralElementForMultiplication = getNeutralRealElementForMultiplication;
-        REAL_FIELD_INFO->compareElements = compareRealElements;
+        realFieldInfo->elementSize = sizeof(double);
+        realFieldInfo->inputElement = inputRealElement;
+        realFieldInfo->printElement = printRealElement;
+        realFieldInfo->foldElements = foldRealElements;
+        realFieldInfo->multiplyElementByScalar = multiplyRealElementByScalar;
+        realFieldInfo->getInverseElementForAddition = getInverseRealElementForAddition;
+        realFieldInfo->getInverseElementForMultiplication = getInverseRealElementForMultiplication;
+        realFieldInfo->getNeutralElementForAddition = getNeutralRealElementForAddition;
+        realFieldInfo->getNeutralElementForMultiplication = getNeutralRealElementForMultiplication;
+        realFieldInfo->compareElements = compareRealElements;
     }
-    return REAL_FIELD_INFO;
+    return realFieldInfo;
 }
 
 void inputDoubleElementForReal(double *element, FILE *incomingFlow, FILE *exceptionFlow) {
     int index = 1;
     int inputSymbolCode;
     int hasDecimalPoint = 0;
-    char inputBuffer[BUFFER_SIZE];
+    char inputBuffer[bufferSize];
     inputBuffer[0] = 43;
     while (isspace(inputSymbolCode = fgetc(incomingFlow)) && inputSymbolCode != EOF);
-    while (index < BUFFER_SIZE - 1 && inputSymbolCode != EOF) {
+    while (index < bufferSize - 1 && inputSymbolCode != EOF) {
         if (isspace(inputSymbolCode)) {
             break;
         } else if (inputSymbolCode == '.') {

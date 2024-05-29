@@ -6,10 +6,14 @@
 #define inputStream stdin
 #define outputStream stdout
 #define developerExceptionStream stderr
-#define BUFFER_SIZE 26
+#define bufferSize 26
 
 
 void inputLongElementForMenu(long *element, FILE *incomingFlow, FILE *exceptionFlow);
+
+void enablingStacktrace(FILE **exceptionStream, long *userChoice, int *exceptionCount);
+
+void selectionOfTheNumberOfLinearForms(FILE *exceptionStream, long *userChoice, int *exceptionCount, long *sizeOfLinearFormArray);
 
 void menu() {
     FILE *exceptionStream = tmpfile();
@@ -20,44 +24,11 @@ void menu() {
     long userChoice;
     int exceptionCount = 0;
     long sizeOfLinearFormArray;
-    fprintf(outputStream, "Do you want to see stacktrace? ('1' = Yes, '2' = No)\n");
-    while (1) {
-        inputLongElementForMenu(&userChoice, inputStream, exceptionStream);
-        if (getExceptionCode() != NO_EXCEPTION || userChoice < 1 || userChoice > 2) {
-            exceptionCount++;
-            if (exceptionCount > 4) {
-                fprintf(outputStream, "Too many tries\n");
-                exit(1);
-            }
-            setExceptionCode(NO_EXCEPTION);
-            fprintf(outputStream, "Something went wrong, try again\n");
-            continue;
-        }
-        if (userChoice == 1) {
-            fclose(exceptionStream);
-            exceptionStream = developerExceptionStream;
-        }
-        exceptionCount = 0;
-        break;
-    }
+    fprintf(outputStream, "Do you want to see enablingStacktrace? ('1' = Yes, '2' = No)\n");
+    enablingStacktrace(&exceptionStream, &userChoice, &exceptionCount);
     fprintf(outputStream, "Hello, user\n");
-    fprintf(outputStream, "Select the number of linear forms from 1 to 10:\n");
-    while (1) {
-        inputLongElementForMenu(&userChoice, inputStream, exceptionStream);
-        if (getExceptionCode() != NO_EXCEPTION || userChoice < 1 || userChoice > 10) {
-            exceptionCount++;
-            if (exceptionCount > 4) {
-                fprintf(outputStream, "Too many tries\n");
-                exit(1);
-            }
-            setExceptionCode(NO_EXCEPTION);
-            fprintf(outputStream, "Something went wrong, try again\n");
-            continue;
-        }
-        sizeOfLinearFormArray = userChoice;
-        exceptionCount = 0;
-        break;
-    }
+    fprintf(outputStream, "Select the number of linear forms from 1 to 100:\n");
+    selectionOfTheNumberOfLinearForms(exceptionStream, &userChoice, &exceptionCount, &sizeOfLinearFormArray);
     LinearForm **linearFormArray = (LinearForm **) malloc(sizeOfLinearFormArray * sizeof(LinearForm *));
     if (linearFormArray == NULL) {
         fprintf(outputStream, "Something went wrong: critical error\n");
@@ -67,26 +38,29 @@ void menu() {
     long inputMethod;
     long sizeOfLinearForm;
     long typeOfLinearForm;
-    int isItFirstTime = 1;
+    long leftBorder;
+    long rightBorder;
     while (1) {
-        if (isItFirstTime) {
+        leftBorder = 1;
+        rightBorder = 2;
+        while (1) {
             fprintf(outputStream, "Enter '1' to create a linear form <%li> as form with integer coefficients, '2' - with real, '3' - with complex:\n", currentIndex + 1);
-            isItFirstTime = 0;
-        }
-        inputLongElementForMenu(&userChoice, inputStream, exceptionStream);
-        if (getExceptionCode() != NO_EXCEPTION || userChoice < 1 || userChoice > 2) {
-            exceptionCount++;
-            if (exceptionCount > 4) {
-                for (int index = 0; index < (int) currentIndex; index++) {
-                    freeLinearForm(linearFormArray[index]);
+            inputLongElementForMenu(&userChoice, inputStream, exceptionStream);
+            if (getExceptionCode() != NO_EXCEPTION || userChoice < leftBorder || userChoice > rightBorder) {
+                exceptionCount++;
+                if (exceptionCount > 4) {
+                    for (int index = 0; index < (int) currentIndex; index++) {
+                        freeLinearForm(linearFormArray[index]);
+                    }
+                    free(linearFormArray);
+                    fprintf(outputStream, "Too many tries\n");
+                    exit(1);
                 }
-                free(linearFormArray);
-                fprintf(outputStream, "Too many tries\n");
-                exit(1);
+                setExceptionCode(NO_EXCEPTION);
+                fprintf(outputStream, "Something went wrong, try again\n");
+                continue;
             }
-            setExceptionCode(NO_EXCEPTION);
-            fprintf(outputStream, "Something went wrong, try again\n");
-            continue;
+            break;
         }
         typeOfLinearForm = userChoice;
         exceptionCount = 0;
@@ -215,7 +189,6 @@ void menu() {
         if (currentIndex == (int) sizeOfLinearFormArray) {
             break;
         }
-        isItFirstTime = 1;
     }
     long i, j, k;
     fprintf(outputStream, "----------------------------------\n");
@@ -621,13 +594,54 @@ void menu() {
     free(linearFormArray);
 }
 
+void selectionOfTheNumberOfLinearForms(FILE *exceptionStream, long *userChoice, int *exceptionCount, long *sizeOfLinearFormArray) {
+    while (1) {
+        inputLongElementForMenu(userChoice, inputStream, exceptionStream);
+        if (getExceptionCode() != NO_EXCEPTION || (*userChoice) < 1 || (*userChoice) > 100) {
+            (*exceptionCount)++;
+            if ((*exceptionCount) > 4) {
+                fprintf(outputStream, "Too many tries\n");
+                exit(1);
+            }
+            setExceptionCode(NO_EXCEPTION);
+            fprintf(outputStream, "Something went wrong, try again\n");
+            continue;
+        }
+        (*sizeOfLinearFormArray) = (*userChoice);
+        (*exceptionCount) = 0;
+        break;
+    }
+}
+
+void enablingStacktrace(FILE **exceptionStream, long *userChoice, int *exceptionCount) {
+    while (1) {
+        inputLongElementForMenu(userChoice, inputStream, (*exceptionStream));
+        if (getExceptionCode() != NO_EXCEPTION || (*userChoice) < 1 || (*userChoice) > 2) {
+            (*exceptionCount)++;
+            if ((*exceptionCount) > 4) {
+                fprintf(outputStream, "Too many tries\n");
+                exit(1);
+            }
+            setExceptionCode(NO_EXCEPTION);
+            fprintf(outputStream, "Something went wrong, try again\n");
+            continue;
+        }
+        if ((*userChoice) == 1) {
+            fclose((*exceptionStream));
+            (*exceptionStream) = developerExceptionStream;
+        }
+        (*exceptionCount) = 0;
+        break;
+    }
+}
+
 void inputLongElementForMenu(long *element, FILE *incomingFlow, FILE *exceptionFlow) {
     int index = 1;
     int inputSymbolCode;
-    char inputBuffer[BUFFER_SIZE];
+    char inputBuffer[bufferSize];
     inputBuffer[0] = 43;
     while (isspace(inputSymbolCode = fgetc(incomingFlow)) && inputSymbolCode != EOF);
-    while (index < BUFFER_SIZE - 1 && inputSymbolCode != EOF) {
+    while (index < bufferSize - 1 && inputSymbolCode != EOF) {
         if (isspace(inputSymbolCode)) {
             break;
         } else if (inputSymbolCode == '+') {

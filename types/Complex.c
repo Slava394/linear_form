@@ -4,43 +4,43 @@
 #include <errno.h>
 #include "../utility/Exception.h"
 #include "Complex.h"
-#define BUFFER_SIZE 26
+#define bufferSize 26
 
 
 void inputLongElementForComplex(long *element, FILE *incomingFlow, FILE *exceptionFlow);
 
-static FieldInfo *COMPLEX_FIELD_INFO = NULL;
+static FieldInfo *complexFieldInfo = NULL;
 
 FieldInfo* getComplexFieldInfo(FILE *exceptionFlow) {
-    if (COMPLEX_FIELD_INFO == NULL) {
-        COMPLEX_FIELD_INFO = (FieldInfo *) malloc(sizeof(FieldInfo));
-        if (COMPLEX_FIELD_INFO == NULL) {
+    if (complexFieldInfo == NULL) {
+        complexFieldInfo = (FieldInfo *) malloc(sizeof(FieldInfo));
+        if (complexFieldInfo == NULL) {
             setExceptionCode(ALLOCATION_MEMORY_EXCEPTION);
             fprintf(exceptionFlow, "[Memory allocation error for complex fieldinfo]\n");
             fprintf(exceptionFlow, "[function: %s | file: %s ]\n", __func__, __FILE__);
             return NULL;
         }
-        COMPLEX_FIELD_INFO->elementSize = sizeof(Complex);
-        COMPLEX_FIELD_INFO->inputElement = inputComplexElement;
-        COMPLEX_FIELD_INFO->printElement = printComplexElement;
-        COMPLEX_FIELD_INFO->foldElements = foldComplexElements;
-        COMPLEX_FIELD_INFO->multiplyElementByScalar = multiplyComplexElementByScalar;
-        COMPLEX_FIELD_INFO->getInverseElementForAddition = getInverseComplexElementForAddition;
-        COMPLEX_FIELD_INFO->getInverseElementForMultiplication = getInverseComplexElementForMultiplication;
-        COMPLEX_FIELD_INFO->getNeutralElementForAddition = getNeutralComplexElementForAddition;
-        COMPLEX_FIELD_INFO->getNeutralElementForMultiplication = getNeutralComplexElementForMultiplication;
-        COMPLEX_FIELD_INFO->compareElements = compareComplexElements;
+        complexFieldInfo->elementSize = sizeof(Complex);
+        complexFieldInfo->inputElement = inputComplexElement;
+        complexFieldInfo->printElement = printComplexElement;
+        complexFieldInfo->foldElements = foldComplexElements;
+        complexFieldInfo->multiplyElementByScalar = multiplyComplexElementByScalar;
+        complexFieldInfo->getInverseElementForAddition = getInverseComplexElementForAddition;
+        complexFieldInfo->getInverseElementForMultiplication = getInverseComplexElementForMultiplication;
+        complexFieldInfo->getNeutralElementForAddition = getNeutralComplexElementForAddition;
+        complexFieldInfo->getNeutralElementForMultiplication = getNeutralComplexElementForMultiplication;
+        complexFieldInfo->compareElements = compareComplexElements;
     }
-    return COMPLEX_FIELD_INFO;
+    return complexFieldInfo;
 }
 
 void inputLongElementForComplex(long *element, FILE *incomingFlow, FILE *exceptionFlow) {
     int index = 1;
     int inputSymbolCode;
-    char inputBuffer[BUFFER_SIZE];
+    char inputBuffer[bufferSize];
     inputBuffer[0] = 43;
     while (isspace(inputSymbolCode = fgetc(incomingFlow)) && inputSymbolCode != EOF);
-    while (index < BUFFER_SIZE - 1 && inputSymbolCode != EOF) {
+    while (index < bufferSize - 1 && inputSymbolCode != EOF) {
         if (isspace(inputSymbolCode)) {
             break;
         } else if (inputSymbolCode == '+') {
